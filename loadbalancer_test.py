@@ -5,7 +5,6 @@ import re
 import threading
 import urllib.request
 import matplotlib.pyplot as plt
-import requests
 
 REAL_IP_LIST = []
 LOCK = threading.Lock()  # 线程锁实例化
@@ -14,13 +13,10 @@ LOCK = threading.Lock()  # 线程锁实例化
 def get_url(ip):
     with urllib.request.urlopen(f'http://{ip}') as response:
         html = response.read().decode('utf-8')
-    get_ip = re.compile(r'\d+\.\d+\.\d+\.\d+')
-    real_ip = get_ip.search(html)
+    match_ip = re.compile(r'\d+\.\d+\.\d+\.\d+')
+    get_ip = match_ip.search(html)
     with LOCK:
-        REAL_IP_LIST.append(real_ip)
-    # return real_ip.group()
-    # x = requests.get(f'http://{ip}')
-    # return x.content.decode('utf-8')
+        REAL_IP_LIST.append(get_ip.group())
 
 
 if __name__ == '__main__':
@@ -33,15 +29,14 @@ if __name__ == '__main__':
         pre_get = threading.Thread(target=get_url, args=(vip,))
         threading_list.append(pre_get)
         pre_get.start()
-        # with LOCK:
-        #     REAL_IP_LIST.append(get_url(vip))
 
-    for ii in threading_list:
-        ii.join()
+    for thread in threading_list:
+        thread.join()
 
     print(REAL_IP_LIST)
+    # 统计列表内出现的每一个元素的次数，形成一个字典
     for real_ip in REAL_IP_LIST:
-        result_dict[real_ip] = result_dict.get(real_ip, 0) + 1
+        result_dict[real_ip] = result_dict.get(real_ip, 0) + 1  # 如果字典中不存在这个元素，则初始为0，再+1；如果存在则直接+1
 
     print(result_dict)
 
