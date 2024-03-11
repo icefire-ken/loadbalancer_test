@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+
+  httpd-01:
+    image: httpd:latest
+    container_name: httpd-01
+    volumes:
+      - ./web-server-01/:/usr/local/apache2/htdocs/
+    networks:
+      - test-net
+    ports:
+      - "81:80"
+
+  httpd-02:
+    image: httpd:latest
+    container_name: httpd-02
+    volumes:
+      - ./web-server-02/:/usr/local/apache2/htdocs/
+    networks:
+      - test-net
+    ports:
+      - "82:80"
+
+  httpd-03:
+    image: httpd:latest
+    container_name: httpd-03
+    volumes:
+      - ./web-server-03/:/usr/local/apache2/htdocs/
+    networks:
+      - test-net
+    ports:
+      - "83:80"
+
+  httpd-04:
+    image: httpd:latest
+    container_name: httpd-04
+    volumes:
+      - ./web-server-04/:/usr/local/apache2/htdocs/
+    networks:
+      - test-net
+    ports:
+      - "84:80"
+
+
+networks:
+
+  test_net:
+    driver: bridge
+    name: test-net
+    ipam:
+      config:
+        - subnet: 172.30.4.0/24
+          gateway: 172.30.4.1
